@@ -11,14 +11,13 @@
 <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
-	<script> function vid.play() {document.getElementById("disappear").innerhtml= "";} </script> 
 <script> AFRAME.registerComponent('vidhandler', {  init: function () {  this.toggle = false; this.vid = document.querySelector("#vid"); this.vid.pause(); }, tick:function(){ if(this.el.object3D.visible == true){ if(!this.toggle){ this.toggle = true; this.vid.play(); } }else{ this.toggle = false; this.vid.pause(); } } }); function refrespage() { location.reload(); } </script>
 <body style='margin : 0px; overflow: hidden;'>
 	<a-scene embedded artoolkit='sourceType: webcam; detectionMode: mono; maxDetectionRate: 30; canvasWidth: 400; canvasHeight: 400' >
 
      <a-assets >
         <video preload="auto"  id="vid"loop="true" crossorigin  webkit-playsinline playsinline controls>
-           <source  type="video/mp4"  src="bluegreen.mp4">
+           <source  type="video/mp4"  src="blue1.mp4">
            <h3>Error : Your browser does not support.</h3>
           <!-- FOR NORMAL VIDEO YOU CAN USE MP4 or WEBM BUT FOR ALPHA VIDEO YOU NEED TO USE .WEBM FORMAT-->
         </video>
@@ -35,9 +34,7 @@
      <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-left">
            <div class="onebleft">
-				<div id="disappear">
               <button onclick="vid.play()" class="btn btnskips" style="textcolour:red; height:40px; width:50px; border-radius:10px;"> Play </button>
-		                 </div>
            </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right">
