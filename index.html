@@ -12,7 +12,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
 <script> AFRAME.registerComponent('vidhandler', {  init: function () {  this.toggle = false; this.vid = document.querySelector("#vid"); this.vid.pause(); }, tick:function(){ if(this.el.object3D.visible == true){ if(!this.toggle){ this.toggle = true; this.vid.play(); } }else{ this.toggle = false; this.vid.pause(); } } }); function refrespage() { location.reload(); } </script>
 <body style='margin : 0px; overflow: hidden;'>
-	<a-scene embedded artoolkit='sourceType: webcam; detectionMode: mono; maxDetectionRate: 30; canvasWidth: 600; canvasHeight: 500' >
+	<a-scene embedded artoolkit='sourceType: webcam; detectionMode: mono; maxDetectionRate: 30; canvasWidth: 300; canvasHeight: 300' >
 
      <a-assets >
         <video preload="auto"  id="vid"loop="true" crossorigin  webkit-playsinline playsinline controls>
@@ -23,7 +23,7 @@
      </a-assets>
    
     <a-marker preset='custom' type='pattern' url='pattern-marker.patt'>
-        <a-plane  position='0 0 0' scale="4 4 4" rotation="-90 0 0" material='transparent:true;alphaTest:0;src:#vid'></a-plane>
+        <a-plane  position='0 0.1 0' scale="2 2 2" rotation="-90 0 0" material='transparent:true;alphaTest:0;src:#vid'></a-plane>
      </a-marker>
      <a-entity camera></a-entity>
   </a-scene>
@@ -31,20 +31,17 @@
      <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-left">
            <div class="onebleft">
-              <button onclick="vid.play()" class="btn btnskips" style="height:40px; width:50px; border-radius:10px;"> Play </button>
+               <button onclick="vid.play()" class="btn btnskips" height:40px; width:50px; border-radius:10px;"> Play </button>
            </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right">
-		<div>3DxAR</div>
-		<div class="onebright">
-              <button onclick="refrespage()" class="btn btnskips" style="height:40px; width:70px; border-radius:10px">Refresh</button>
+           <div class="onebright">
+              <button onclick="refrespage()" class="btn btnskips" height:40px; width:50px; border-radius:10px;">Refresh</button>
            </div>
         </div>
      </div>
   </div>
-
   <style>
-		  
      .footer {
      position: fixed;
      left: 0;
