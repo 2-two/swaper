@@ -7,13 +7,12 @@
 <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
 <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.6.2/aframe/build/aframe-ar.js"></script>
 <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v4.1.2/dist/aframe-extras.min.js"></script>
-<script src="https://unpkg.com/aframe-chromakey-material/dist/aframe-chromakey-material.min.js"></script>
 <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
 <script> AFRAME.registerComponent('vidhandler', {  init: function () {  this.toggle = false; this.vid = document.querySelector("#vid"); this.vid.pause(); }, tick:function(){ if(this.el.object3D.visible == true){ if(!this.toggle){ this.toggle = true; this.vid.play(); } }else{ this.toggle = false; this.vid.pause(); } } }); function refrespage() { location.reload(); } </script>
 <body style='margin : 0px; overflow: hidden;'>
-	<a-scene embedded artoolkit='sourceType: webcam; detectionMode: mono; maxDetectionRate: 30; canvasWidth: 400; canvasHeight: 400' >
+	<a-scene embedded artoolkit='sourceType: webcam; detectionMode: mono; maxDetectionRate: 30; canvasWidth: 300; canvasHeight: 300' >
 
      <a-assets >
         <video preload="auto"  id="vid"loop="true" crossorigin  webkit-playsinline playsinline controls>
@@ -24,22 +23,20 @@
      </a-assets>
    
     <a-marker preset='custom' type='pattern' url='pattern-marker.patt'>
-        <a-plane  position='0.1 0.1 0.1' scale="3 3 3" rotation="-90 0 0" material="shader: chromakey; src: #vid></a-plane>
-	 </a-marker>
+        <a-plane  position='0 0.1 0' scale="2 2 2" rotation="-90 0 0" material='transparent:true;alphaTest:0;src:#vid'></a-plane>
+     </a-marker>
      <a-entity camera></a-entity>
-	
- 
   </a-scene>
   <div class="footer">
      <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-left">
            <div class="onebleft">
-              <button onclick="vid.play()" class="btn btnskips" style="textcolour:red; height:40px; width:50px; border-radius:10px;"> Play </button>
+              <button onclick="vid.play()" class="btn btnskips"> Play </button>
            </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right">
            <div class="onebright">
-              <button onclick="refrespage()" class="btn btnskips" style="color:red; height:40px; width:70px; border-radius:10px;">Refresh</button>
+              <button onclick="refrespage()" class="btn btnskips">Refresh</button>
            </div>
         </div>
      </div>
