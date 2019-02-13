@@ -16,7 +16,7 @@
 
      <a-assets >
         <video preload="auto"  id="vid"loop="true" crossorigin  webkit-playsinline playsinline controls>
-           <source  type="video/mp4"  src="t11.mp4">
+           <source  type="video/mp4"  src="test.mp4">
            <h3>Error : Your browser does not support.</h3>
           <!-- FOR NORMAL VIDEO YOU CAN USE MP4 or WEBM BUT FOR ALPHA VIDEO YOU NEED TO USE .WEBM FORMAT-->
         </video>
@@ -27,18 +27,14 @@
      </a-marker>
      <a-entity camera></a-entity>
   </a-scene>
-  </div>
-</div>
   <div class="footer">
      <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-left">
            <div class="onebleft">
-                <button onclick="vid.play()" class="btn btnskips" style="textcolour:red; height:40px; width:50px; border-radius:10px;"> Play </button>
+              <button onclick="vid.play()" class="btn btnskips" style="height:40px; width:50px; border-radius:10px" > Play </button>
            </div>
         </div>
-        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-center">
-		<div> 3DxAR </div>
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right">
            <div class="onebright">
               <button onclick="refrespage()" class="btn btnskips" style="height:40px; width:70px; border-radius:10px" >Refresh</button>
            </div>
@@ -46,15 +42,6 @@
      </div>
   </div>
   <style>
-.container .content {
-  position: absolute; /* Position the background text */
-  bottom: 0; /* At the bottom. Use top:0 to append it to the top */
-  background: rgb(1, 1, 1); /* Fallback color */
-  background: rgba(1, 1, 1, 0.5); /* Black background with 0.5 opacity */
-  color: #f1f1f1; /* Grey text */
-  width: 50%; /* Full width */
-  padding: 20px; /* Some padding */
-}
      .footer {
      position: fixed;
      left: 0;
