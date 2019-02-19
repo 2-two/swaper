@@ -36,8 +36,8 @@
   <div class="footer">
      <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-left">
-           <div class="onebleft">
-              <button onclick="vid.play()" class="btn btnskips" style="textcolour:red; height:40px; width:50px; border-radius:10px;"> Play </button>
+           <div class="wrapper">
+              <button onclick="vid.play()" class="button" style="textcolour:red; height:40px; width:50px; border-radius:10px;"> Play </button>
            </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right">
@@ -55,12 +55,14 @@
      width: 100%;
      color: white;
      }
-     .onebleft{
-     padding: 5px 5px 5px 5px;
-     margin: 5px 15px 5px 5px ;
-     float: left;
-     z-index: 900000000000;
+     .wrapper{
+         text-align: center;
      }
+
+     .button {
+      position: absolute;
+      top: 75%;
+      }
      .onebright{
      padding: 5px 5px 5px 5px;
      margin: 5px 15px 5px 5px ;
