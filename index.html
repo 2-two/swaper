@@ -1,12 +1,11 @@
-<<html>
+html>
 <head>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <script src="https://aframe.io/aframe/dist/aframe-master.min.js"></script>
 <script src="https://cdn.rawgit.com/chrisveness/latlon-geohash/53c3d474/latlon-geohash.js"></script>
-<script src="https://cdn.rawgit.com/Esri/html5-geolocation-tool-js/cdd20903/js/GeolocationHelper.js"></script>
 <script src="https://rawcdn.githack.com/donmccurdy/aframe-extras/dcb4084cc89596cebcd24195a8753d877bea2f92/dist/aframe-extras.loaders.min.js"></script>
-<script src="components.js?4:18 28.09.2018"></script>
+<script src="components.js"></script>
 <script>
 var hash_fences = {};
 function ce(t,a){ var f = document.createElement(t); for(var k in a) f.setAttribute(k, a[k]); return f; }
@@ -39,18 +38,107 @@ function load_hash(d){
 	}
 	
 }
-function toggleFullScreen() {
-	var doc = window.document;
-	var docEl = doc.documentElement;
+var initBGWebcam = function(onReady, onError){
+	var _this = this;
 	
-	var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-	var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+	var domElement = (function(onReady, onError) {
+		var _this = this;
+		
+		// init default value
+		onError = onError || function(error){
+			alert('Webcam Error\nName: '+error.name + '\nMessage: '+error.message);
+		}
+		
+		var domElement = document.createElement('video');
+		domElement.setAttribute('autoplay', '');
+		domElement.setAttribute('muted', '');
+		domElement.setAttribute('playsinline', '');
+		domElement.style.width = 640+'px';
+		domElement.style.height = 480+'px';
+		
+		// check API is available
+		if (navigator.mediaDevices === undefined 
+				|| navigator.mediaDevices.enumerateDevices === undefined 
+				|| navigator.mediaDevices.getUserMedia === undefined  ){
+			if( navigator.mediaDevices === undefined )
+				var fctName = 'navigator.mediaDevices';
+			else if( navigator.mediaDevices.enumerateDevices === undefined )
+				var fctName = 'navigator.mediaDevices.enumerateDevices';
+			else if( navigator.mediaDevices.getUserMedia === undefined )
+				var fctName = 'navigator.mediaDevices.getUserMedia';
+			else console.assert(false);
+				onError({
+					name: '',
+					message: 'WebRTC issue-! '+fctName+' not present in your browser'
+				});
+			return null;
+		}
+		
+		// get available devices
+		navigator.mediaDevices.enumerateDevices().then(function(devices) {
+					var userMediaConstraints = {
+				audio: false,
+				video: {
+					facingMode: 'environment',
+					width: {
+						ideal: 640,
+						// min: 1024,
+						// max: 1920
+					},
+					height: {
+						ideal: 480,
+						// min: 776,
+						// max: 1080
+					}
+				}
+					};
+			// get a device which satisfy the constraints
+			navigator.mediaDevices.getUserMedia(userMediaConstraints).then(function success(stream) {
+				// set the .src of the domElement
+				domElement.srcObject = stream;
+				// to start the video, when it is possible to start it only on userevent. like in android
+				document.body.addEventListener('click', function(){
+					domElement.play();
+				})
+				// domElement.play();
+				
+				// TODO listen to loadedmetadata instead
+				// wait until the video stream is ready
+				var interval = setInterval(function() {
+					if (!domElement.videoWidth)	return;
+					onReady()
+					clearInterval(interval)
+				}, 1000/50);
+				
+			}).catch(function(error) {
+				onError({
+					name: error.name,
+					message: error.message
+				});
+			});
+		}).catch(function(error) {
+			onError({
+				message: error.message
+			});
+		});
+		
+		return domElement;
+	})(function onSourceReady(){
+		document.body.appendChild(_this.domElement);
+		_this.ready = true;
+		onReady && onReady();
+	}, onError);
 	
-	if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-		requestFullScreen.call(docEl);
-	} else {
-		cancelFullScreen.call(doc);
-	}
+	
+	// attach
+	this.domElement = domElement;
+	this.domElement.style.position = 'absolute';
+	this.domElement.style.top = '0px';
+	this.domElement.style.left = '0px';
+	this.domElement.style.zIndex = '-2';
+	
+	return this;
+	
 }
 window.onload = function(){
 	
@@ -108,35 +196,10 @@ window.onload = function(){
 	});
 	
 	
+	initBGWebcam.call(document.body);
+	
+	
 };
-var geoHelper = new GeolocationHelper({
-	/*
-	"UNITS" in filters ? this.UNITS = filters.UNITS : this.UNITS = "M"; // M = miles, K = km, N = nautical miles
-	"MAX_ACCURACY" in filters ? this.MAX_ACCURACY = filters.MAX_ACCURACY : this.MAX_ACCURACY = 100 ;
-	"MAX_MEDIAN_ACCURACY" in filters ? this.MAX_MEDIAN_ACCURACY = filters.MAX_MEDIAN_ACCURACY : this.MAX_MEDIAN_ACCURACY = 20;
-	"MAX_STDDEVIATION_ACCURACY" in filters ? this.MAX_STDDEVIATION_ACCURACY = filters.MAX_STDDEVIATION_ACCURACY : this.MAX_STDDEVIATION_ACCURACY = 2.5;
-	"MAX_STDDEVIATION_LAT" in filters ? this.MAX_STDDEVIATION_LAT = filters.MAX_STDDEVIATION_LAT : this.MAX_STDDEVIATION_LAT = 0.0001;
-	"MAX_STDDEVIATION_LON" in filters ? this.MAX_STDDEVIATION_LON = filters.MAX_STDDEVIATION_LON : this.MAX_STDDEVIATION_LON = 0.0001;
-	"MAX_ARRAY_SIZE" in filters ? this.MAX_ARRAY_SIZE = filters.MAX_ARRAY_SIZE : this.MAX_ARRAY_SIZE = 25;
-	*/
-});
-function smooth_gps(p){
-	
-	var np;
-	
-	geoHelper.process(p.coords.accuracy, p.coords.latitude, p.coords.longitude, p.timestamp, function(locationObject){
-		np = {
-			coords: {
-				accuracy: locationObject.med_accuracy,
-				latitude: locationObject.center_point.latitude,
-				longitude: locationObject.center_point.longitude
-			},
-			timestamp: p.timestamp
-		}
-	})
-	
-	return np;
-}
 </script>
 </head>
 <body style='margin: 0px; overflow: hidden;'>
@@ -159,9 +222,7 @@ function smooth_gps(p){
 	
 	<a-scene><!--  -->
 		
-		<a-camera id="camera" user-height="1.6" gps-position="position-callback: smooth_gps" compass-rotation>
-			<a-cursor></a-cursor>
-		</a-camera>
+		<a-camera id="camera" user-height="1.6" gps-position compass-rotation><!--  --></a-camera>
 		
 		<a-assets id="assets">
 			<!--
@@ -180,8 +241,6 @@ function smooth_gps(p){
 			<a-entity id="fence_50_31_0040507_25" collada-model="#fence_50_31_0040507_25_asset" transparent-texture gps-place="longitude: 37.470954400759; latitude: 55.153490379075"></a-entity>
 			-->
 		</a-entity>
-		
-		<a-sky></a-sky>
 		
 	</a-scene>
 </body>
