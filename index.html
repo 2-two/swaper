@@ -1,111 +1,13 @@
-<html>
+<<html>
 <head>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <script src="https://aframe.io/aframe/dist/aframe-master.min.js"></script>
 <script src="https://cdn.rawgit.com/chrisveness/latlon-geohash/53c3d474/latlon-geohash.js"></script>
+<script src="https://cdn.rawgit.com/Esri/html5-geolocation-tool-js/cdd20903/js/GeolocationHelper.js"></script>
 <script src="https://rawcdn.githack.com/donmccurdy/aframe-extras/dcb4084cc89596cebcd24195a8753d877bea2f92/dist/aframe-extras.loaders.min.js"></script>
-<script src="components.js?3:54 28.09.2018"></script>
+<script src="components.js?4:18 28.09.2018"></script>
 <script>
-MERCATOR = {
-	
-	fromLatLngToPoint: function(latLng){
-		var siny = Math.min(
-			Math.max(
-				Math.sin(latLng.lat * (Math.PI / 180)), 
-				-.9999
-			),
-			.9999
-		);
-		return {
-			x: 128 + latLng.lng * (256/360),
-			y: 128 + 0.5 * Math.log((1 + siny) / (1 - siny)) * - (256 / (2 * Math.PI))
-		};
-	},
-	
-	fromPointToLatLng: function(point){
-		return {
-			lat: (2 * Math.atan(Math.exp((point.y - 128) / -(256 / (2 * Math.PI)))) - Math.PI / 2)/ (Math.PI / 180),
-			lng: (point.x - 128) / (256 / 360)
-		};
-		
-	},
-	
-	getTileAtLatLng: function(latLng, zoom){
-		var
-			t = Math.pow(2, zoom),
-			s = 256/t,
-			p = this.fromLatLngToPoint(latLng)
-		;
-		return {
-			x: Math.floor(p.x/s),
-			y: Math.floor(p.y/s),
-			z: zoom
-		};
-	},
-	
-	getTileBounds: function(tile){
-		tile = this.normalizeTile(tile);
-		var
-			t = Math.pow(2, tile.z),
-			s = 256/t,
-			sw = {
-				x: tile.x*s,
-				y: (tile.y*s) + s
-			},
-			ne = {
-				x: tile.x*s + s,
-				y: (tile.y*s)
-			}
-		;
-		return {
-			sw: this.fromPointToLatLng(sw),
-			ne: this.fromPointToLatLng(ne)
-		};
-	},
-	
-	normalizeTile: function(tile){
-		var t = Math.pow(2, tile.z);
-		tile.x = ((tile.x%t)+t)%t;
-		tile.y = ((tile.y%t)+t)%t;
-		return tile;
-	}
-	
-}
-function mturl(latitude,longitude,zoom,type){
-	/*
-	sat
-	http://mt0.google.com/vt/lyrs=s&x=1325&y=3143&z=13
-	hyb
-	http://mt0.google.com/vt/lyrs=y&x=1325&y=3143&z=13
-	sat+traf
-	http://mt0.google.com/vt/lyrs=s@221097413,traffic&x=1325&y=3143&z=13
-	h = roads only
-	m = standard roadmap
-	p = terrain
-	r = somehow altered roadmap
-	s = satellite only
-	t = terrain only
-	y = hybrid
-	*/
-	if(typeof(type) != 'string') type = 'y';
-	var xyz = MERCATOR.getTileAtLatLng({lat:latitude,lng:longitude},zoom);
-	return 'http://mt'+parseInt(Math.random()*4)+'.google.com/vt/lyrs='+type+'&x='+xyz.x+'&y='+xyz.y+'&z='+zoom;
-}
-/*
-(function mturl(latitude,longitude,zoom){
-	var xyz = MERCATOR.getTileAtLatLng({lat: latitude, lng: longitude}, zoom);
-	return 'http://mt0.google.com/vt/lyrs=y&x='+xyz.x+'&y='+xyz.y+'&z='+zoom;
-})(55.1532964, 37.4693835, 18)
-http://mt0.google.com/vt/lyrs=y&x=158356&y=82720&z=18
-MERCATOR.getTileBounds({x:158356,y:82731,z:18})
-ne:
-lat: 55.1451340140052
-lng: 37.470245361328125
-sw:
-lat: 55.14434917097695
-lng: 37.4688720703125
-*/
 var hash_fences = {};
 function ce(t,a){ var f = document.createElement(t); for(var k in a) f.setAttribute(k, a[k]); return f; }
 function load_hash(d){
@@ -137,70 +39,17 @@ function load_hash(d){
 	}
 	
 }
-function load_ground_tile(latitude, longitude, tile_zoom, tile_type){
-	if(typeof(tile_type) == 'undefined')
-		tile_type = 'y';
-	if(typeof(tile_zoom) == 'undefined')
-		tile_zoom = 18;
+function toggleFullScreen() {
+	var doc = window.document;
+	var docEl = doc.documentElement;
 	
-	var gpsPosition = camera.components['gps-position'];
+	var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+	var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 	
-	var xyz = MERCATOR.getTileAtLatLng({lat: latitude, lng: longitude}, tile_zoom);
-	var tile_url = '//mt'+parseInt(Math.random()*4)+'.google.com/vt/lyrs='+tile_type+'&x='+xyz.x+'&y='+xyz.y+'&z='+tile_zoom;
-	
-	var tile_bounds = MERCATOR.getTileBounds({x: xyz.x, y: xyz.y, z: tile_zoom});
-	
-	var tile_id = 'tile_'+xyz.x+'_'+xyz.y;
-	var tile_width = gpsPosition.calcMeters(
-		{
-			longitude: tile_bounds.ne.lng,
-			latitude: tile_bounds.ne.lat
-		},
-		{
-			longitude: tile_bounds.ne.lng,
-			latitude: tile_bounds.sw.lat
-		}
-	);
-	var tile_height = gpsPosition.calcMeters(
-		{
-			longitude: tile_bounds.sw.lng,
-			latitude: tile_bounds.ne.lat
-		},
-		{
-			longitude: tile_bounds.ne.lng,
-			latitude: tile_bounds.ne.lat
-		}
-	);
-	/*
-	ne:
-	lat: 55.1451340140052
-	lng: 37.470245361328125
-	sw:
-	lat: 55.14434917097695
-	lng: 37.4688720703125
-	*/
-	//if(!ground.querySelector('a-entity#'+tile_id)){
-	if(!document.getElementById(tile_id)){
-		/*
-		ground.appendChild(ce('a-plane', {
-			id: tile_id,
-			height: tile_height,
-			width: tile_width,
-			rotation: '-90 0 0',
-			src: tile_url,
-			'gps-place': 'longitude: ' + (tile_bounds.sw.lng-(tile_bounds.sw.lng-tile_bounds.ne.lng)/2) + '; latitude: ' + (tile_bounds.sw.lat-(tile_bounds.sw.lat-tile_bounds.ne.lat)/2)
-		}));
-		*/
-		ground.appendChild(ce('a-entity', {
-			id: tile_id,
-			geometry: 'primitive: plane; height: '+tile_height+'; width: '+tile_width,
-			//position: '0 0 0',
-			rotation: '-90 0 0',
-			material: 'shader: flat; src: url(' + tile_url + ')',
-			//'gps-place': 'latitude: ' + tile_bounds.ne.lat + '; longitude:' + tile_bounds.ne.lng
-			'gps-place': 'longitude: ' + (tile_bounds.sw.lng-(tile_bounds.sw.lng-tile_bounds.ne.lng)/2) + '; latitude: ' + (tile_bounds.sw.lat-(tile_bounds.sw.lat-tile_bounds.ne.lat)/2)
-		}));
-		
+	if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+		requestFullScreen.call(docEl);
+	} else {
+		cancelFullScreen.call(doc);
 	}
 }
 window.onload = function(){
@@ -246,11 +95,6 @@ window.onload = function(){
 							src: 'https://yaglov.ru/cadastre/hash.php?hash='+hash+'&callback=load_hash'
 						}));
 					}
-					var olat = 0.0006;
-					var olng = 0.0006;
-					for(var tlat = gpsPosition.crd.latitude - olat*2; tlat <= gpsPosition.crd.latitude + olat*2; tlat += olat)
-					for(var tlng = gpsPosition.crd.longitude - olng*2; tlng <= gpsPosition.crd.longitude + olng*2; tlng += olng)
-						load_ground_tile(tlat, tlng, 18, 'y');
 					
 				}
 				if(gpsPosition.zeroCrd){
@@ -265,6 +109,34 @@ window.onload = function(){
 	
 	
 };
+var geoHelper = new GeolocationHelper({
+	/*
+	"UNITS" in filters ? this.UNITS = filters.UNITS : this.UNITS = "M"; // M = miles, K = km, N = nautical miles
+	"MAX_ACCURACY" in filters ? this.MAX_ACCURACY = filters.MAX_ACCURACY : this.MAX_ACCURACY = 100 ;
+	"MAX_MEDIAN_ACCURACY" in filters ? this.MAX_MEDIAN_ACCURACY = filters.MAX_MEDIAN_ACCURACY : this.MAX_MEDIAN_ACCURACY = 20;
+	"MAX_STDDEVIATION_ACCURACY" in filters ? this.MAX_STDDEVIATION_ACCURACY = filters.MAX_STDDEVIATION_ACCURACY : this.MAX_STDDEVIATION_ACCURACY = 2.5;
+	"MAX_STDDEVIATION_LAT" in filters ? this.MAX_STDDEVIATION_LAT = filters.MAX_STDDEVIATION_LAT : this.MAX_STDDEVIATION_LAT = 0.0001;
+	"MAX_STDDEVIATION_LON" in filters ? this.MAX_STDDEVIATION_LON = filters.MAX_STDDEVIATION_LON : this.MAX_STDDEVIATION_LON = 0.0001;
+	"MAX_ARRAY_SIZE" in filters ? this.MAX_ARRAY_SIZE = filters.MAX_ARRAY_SIZE : this.MAX_ARRAY_SIZE = 25;
+	*/
+});
+function smooth_gps(p){
+	
+	var np;
+	
+	geoHelper.process(p.coords.accuracy, p.coords.latitude, p.coords.longitude, p.timestamp, function(locationObject){
+		np = {
+			coords: {
+				accuracy: locationObject.med_accuracy,
+				latitude: locationObject.center_point.latitude,
+				longitude: locationObject.center_point.longitude
+			},
+			timestamp: p.timestamp
+		}
+	})
+	
+	return np;
+}
 </script>
 </head>
 <body style='margin: 0px; overflow: hidden;'>
@@ -285,9 +157,9 @@ window.onload = function(){
 		<div>geohash_7chars: <span id="geohash_7chars"></span></div>
 	</div>
 	
-	<a-scene fog="type: linear; color: #90b7ee; far: 220; near: 0;"><!--  -->
+	<a-scene><!--  -->
 		
-		<a-camera id="camera" user-height="1.6" position="0 20 0" gps-position compass-rotation>
+		<a-camera id="camera" user-height="1.6" gps-position="position-callback: smooth_gps" compass-rotation>
 			<a-cursor></a-cursor>
 		</a-camera>
 		
@@ -309,13 +181,7 @@ window.onload = function(){
 			-->
 		</a-entity>
 		
-		<a-entity id="ground" gmap-ground="type: y; zoom: 18">
-			<!--
-			<a-entity geometry="primitive: plane; height: 84.5; width: 84.5" position="0 -0.5 0" rotation="-90 0 0" material="shader: flat; src: url(http://mt0.google.com/vt/lyrs=y&amp;x=158356&amp;y=82731&amp;z=18)"></a-entity>
-			-->
-		</a-entity>
-		
-		<a-sky color="#a9c8e3"></a-sky>
+		<a-sky></a-sky>
 		
 	</a-scene>
 </body>
