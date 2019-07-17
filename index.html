@@ -1,34 +1,120 @@
-<!doctype HTML>
-<html>
-    <head>
-        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    </head>
-    <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
-    <script src="https://rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.min.js"></script>
-    <script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
-    
-    <body style='margin : 0px; overflow: hidden;'>
-        <!-- we add detectionMode and matrixCodeType to tell AR.js to recognize barcode markers -->
-        <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'>
 
-        <a-assets>
-        <a-asset-item id="animated-assetobj" src="Radisson+Hotel[1][1].obj"></a-asset-item>
-        <a-asset-item id="animated-assetmtl" src="Radisson+Hotel[1][1].mtl"></a-asset-item>
-            </a-assets>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta aframe-injected="" name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no,user-scalable=no,minimal-ui">
+  <meta aframe-injected="" name="mobile-web-app-capable" content="yes">
+  <meta description="Web Augmented Reality for Kids. The letters and pictures of the alphabet are learned through Augmented Reality.">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ 
+  <title>
+    AR- Real Estate
+  </title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
+<script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.js"></script>
+  <script async src="main.js"></script>
+</head>
 
-        <a-marker preset='hiro'>
-           
-        
-        
-            <a-entity
-              
-                      obj-model=”obj: #animated-assetobj; 
-                                 mtl: #animated-assetmtl”;
-                      scale="1 1 1">
-            </a-entity>
-        </a-marker>
+<body>
+  <main class="main">
+    <div id="header">
+      <div id="header-content">
+        <div>👪 AR for everyone</div>
+      </div>
+    </div>
+    <div id="splashScreen" class="AR-tip" style="display:none">
+      <p>👪 Magic is Everywhere!
+        <div>
+          <a href="#" class="help" style="font-size:14px;">How it works?</a>
+          <a style="white-space: nowrap; font-size: 13px;" class="links" target="_blank" href="https://github.com/prashant-andani/AR-Alphabets-words/blob/master/assets/pattern-letterG.png?raw=true">Get marker here.</a>
+        </div>
+        <div id="video_demo" class="demo" style="display:none">
+          <iframe width="100%" height="240" src="https://www.youtube.com/embed/SMsX6W6OqZ8?loop=1">
+          </iframe>
+          <p style="font-size:1em; font-weight:600">Note: Scan the hiro marker with letter</p>
+        </div>
+      </p>
+      <div class="gotit btn custom-button">Start</div>
+    </div>
+    <div class="word-tip">
+      <div class="title"></div>
+    </div>
 
-        <a-entity camera></a-entity>
-        </a-scene>
-    </body>
+    <div class="btns-wrap">
+      <div title="Rotate 360" class="btn rotate"></div>
+      <div title="Zoom in/out" class="btn scale"></div>
+      <div title="Previous Letter" class="btn prev custom-button"></div>
+      <div title="Next Letter" class="btn next custom-button"></div>
+          </div>
+    <div class="AR-tip" id="noMedia" style="display:none">
+    </div>
+  </main>
+
+  <a-scene embedded arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: false;' hidden>
+    <a-assets>
+      <a-asset-item id="airplane_asset_mtl" src="https://raw.githubusercontent.com/2-two/swaper/master/Radisson%2BHotel%5B1%5D%5B1%5D.mtl"></a-asset-item>
+      <a-asset-item id="airplane_asset_obj" src="https://raw.githubusercontent.com/2-two/swaper/master/Radisson%2BHotel%5B1%5D%5B1%5D.obj"></a-asset-item>
+
+      <a-asset-item id="axe_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/axe/scene.gltf"></a-asset-item>
+      <a-asset-item id="boat_asset" src="https://raw.githubusercontent.com/hydrocarbo/hobby/master/blue.glb"></a-asset-item>
+      <a-asset-item id="cow_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/cow/scene.gltf"></a-asset-item>
+      <a-asset-item id="deer_asset" src="https://raw.githubusercontent.com/hydrocarbo/hobby/master/gltf/untitled.gltf"></a-asset-item>
+      <a-asset-item id="earth_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/earth/scene.gltf"></a-asset-item>
+      <a-asset-item id="flower_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/flower/scene.gltf"></a-asset-item>
+      <a-asset-item id="goat_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/goat/Mesh_Goat.obj"></a-asset-item>
+      <a-asset-item id="goat_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/goat/Mesh_Goat.mtl"></a-asset-item>
+      <a-asset-item id="headphone_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/headphone/1331%20HighEnd%20Headset.obj"></a-asset-item>
+      <a-asset-item id="headphone_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/headphone/1331%20HighEnd%20Headset.mtl"></a-asset-item>
+      <a-asset-item id="iphone_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/iphone/scene.gltf"></a-asset-item>
+      <a-asset-item id="jaguar_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/jaguar/scene.gltf"></a-asset-item>
+      <a-asset-item id="knife_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/knife/scene.gltf"></a-asset-item>
+      <a-asset-item id="lion_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/lion/scene.gltf"></a-asset-item>
+      <a-asset-item id="monkey_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/monkey/Monkey.obj"></a-asset-item>
+      <a-asset-item id="monkey_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/monkey/Monkey.mtl"></a-asset-item>
+      <a-asset-item id="nest_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/nest/PUSHILIN_birds_nest.obj"></a-asset-item>
+      <a-asset-item id="nest_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/nest/PUSHILIN_birds_nest.mtl"></a-asset-item>
+      <a-asset-item id="octopus_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/octopus/model.obj"></a-asset-item>
+      <a-asset-item id="octopus_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/octopus/materials.mtl"></a-asset-item>
+      <a-asset-item id="pencil_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/pencil/scene.gltf"></a-asset-item>
+      <a-asset-item id="qtip_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/qtip/CHAHIN_QTIP.obj"></a-asset-item>
+      <a-asset-item id="qtip_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/qtip/CHAHIN_QTIP.mtl"></a-asset-item>
+      <a-asset-item id="rat_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/rat/scene.gltf"></a-asset-item>
+      <a-asset-item id="scissor_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/scissor/scene.gltf"></a-asset-item>
+      <a-asset-item id="snake_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/AR-Alphabets-words/master/assets/snake/Snake.obj"></a-asset-item>
+      <a-asset-item id="snake_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/AR-Alphabets-words/master/assets/snake/Snake.mtl"></a-asset-item>
+
+      <a-asset-item id="telescope_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/telescope/model.obj"></a-asset-item>
+      <a-asset-item id="telescope_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/telescope/materials.mtl"></a-asset-item>
+      <a-asset-item id="umbrella_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/umbrella/NOVELO_OPENUMBRELLA.mtl"></a-asset-item>
+      <a-asset-item id="umbrella_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/umbrella/NOVELO_OPENUMBRELLA.obj"></a-asset-item>
+      <a-asset-item id="van_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/van/scene.gltf"></a-asset-item>
+
+      <a-asset-item id="vase_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/vase/Vase.obj"></a-asset-item>
+      <a-asset-item id="vase_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/vase/Vase.mtl"></a-asset-item>
+      <a-asset-item id="whale_asset" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/whale/scene.gltf"></a-asset-item>
+      <a-asset-item id="xmas_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/xmas/model.obj"></a-asset-item>
+      <a-asset-item id="xmas_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/xmas/materials.mtl"></a-asset-item>
+      <a-asset-item id="yolk_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/yolk/UncrackedEgg_239.obj"></a-asset-item>
+      <a-asset-item id="yolk_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/yolk/UncrackedEgg_239.mtl"></a-asset-item>
+      <a-asset-item id="zebra_asset_obj" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/zebra_obj/Zebra.obj"></a-asset-item>
+      <a-asset-item id="zebra_asset_mtl" src="https://raw.githubusercontent.com/prashant-andani/3d-models/master/zebra_obj/Zebra.mtl"></a-asset-item>
+    </a-assets>
+
+    <a-marker preset="hiro" id="aframe-scene">
+      <a-entity light="type: hemisphere; color: #fefddd; groundColor: #fefddd; intensity: 1.2"></a-entity>
+    </a-marker>
+
+  <a-entity camera></a-entity>
+
+  </a-scene>
+ 
+
+  
+
+</body>
+
 </html>
